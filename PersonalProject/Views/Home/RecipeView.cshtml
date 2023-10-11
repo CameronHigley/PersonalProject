@@ -1,0 +1,10 @@
+﻿@model RecipeViewModel
+
+@Model.Recipe.RecipeName
+<br />
+<ul>
+@foreach(Ingredient ingredient in Model.Ingredients){
+        <li>@ingredient.IngredientName</li>
+    
+}
+</ul>
