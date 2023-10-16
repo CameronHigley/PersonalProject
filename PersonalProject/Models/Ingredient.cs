@@ -4,9 +4,7 @@
     {
         public int IngredientID { get; set; }
         public string IngredientName { get; set; }
-        public string IngredientAmount { get; set; }
 
-        public int RecipeID { get; set; }
-        public Recipe Recipe { get; set; } = null!;
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; }
     }
 }

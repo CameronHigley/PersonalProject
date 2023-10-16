@@ -12,7 +12,7 @@ using PersonalProject.Data;
 namespace PersonalProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231011150519_initial")]
+    [Migration("20231016184359_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -234,20 +234,11 @@ namespace PersonalProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IngredientID"), 1L, 1);
 
-                    b.Property<string>("IngredientAmount")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("IngredientName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RecipeID")
-                        .HasColumnType("int");
-
                     b.HasKey("IngredientID");
-
-                    b.HasIndex("RecipeID");
 
                     b.ToTable("Ingredients");
 
@@ -255,46 +246,12 @@ namespace PersonalProject.Migrations
                         new
                         {
                             IngredientID = 1,
-                            IngredientAmount = "1 lb.",
-                            IngredientName = "Chicken",
-                            RecipeID = 1
+                            IngredientName = "Chicken"
                         },
                         new
                         {
                             IngredientID = 2,
-                            IngredientAmount = "1 tsp",
-                            IngredientName = "Salt",
-                            RecipeID = 1
-                        });
-                });
-
-            modelBuilder.Entity("PersonalProject.Models.Instruction", b =>
-                {
-                    b.Property<int>("InstructionID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InstructionID"), 1L, 1);
-
-                    b.Property<string>("InstructionDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RecipeID")
-                        .HasColumnType("int");
-
-                    b.HasKey("InstructionID");
-
-                    b.HasIndex("RecipeID");
-
-                    b.ToTable("Instructions");
-
-                    b.HasData(
-                        new
-                        {
-                            InstructionID = 1,
-                            InstructionDescription = "Add salt to chicken and cook until done.",
-                            RecipeID = 1
+                            IngredientName = "Salt"
                         });
                 });
 
@@ -305,6 +262,10 @@ namespace PersonalProject.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecipeID"), 1L, 1);
+
+                    b.Property<string>("RecipeInstructions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RecipeName")
                         .IsRequired()
@@ -318,7 +279,41 @@ namespace PersonalProject.Migrations
                         new
                         {
                             RecipeID = 1,
+                            RecipeInstructions = "Add salt to chicken and cook until done.",
                             RecipeName = "Test"
+                        });
+                });
+
+            modelBuilder.Entity("PersonalProject.Models.RecipeIngredient", b =>
+                {
+                    b.Property<int>("RecipeID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Amount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RecipeID", "IngredientID");
+
+                    b.HasIndex("IngredientID");
+
+                    b.ToTable("RecipeIngredients");
+
+                    b.HasData(
+                        new
+                        {
+                            RecipeID = 1,
+                            IngredientID = 1,
+                            Amount = "1 lb"
+                        },
+                        new
+                        {
+                            RecipeID = 1,
+                            IngredientID = 2,
+                            Amount = "2 tsp"
                         });
                 });
 
@@ -373,33 +368,33 @@ namespace PersonalProject.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PersonalProject.Models.Ingredient", b =>
+            modelBuilder.Entity("PersonalProject.Models.RecipeIngredient", b =>
                 {
+                    b.HasOne("PersonalProject.Models.Ingredient", "Ingredient")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("IngredientID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PersonalProject.Models.Recipe", "Recipe")
-                        .WithMany("Ingredients")
+                        .WithMany("RecipeIngredients")
                         .HasForeignKey("RecipeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Ingredient");
 
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("PersonalProject.Models.Instruction", b =>
+            modelBuilder.Entity("PersonalProject.Models.Ingredient", b =>
                 {
-                    b.HasOne("PersonalProject.Models.Recipe", "Recipe")
-                        .WithMany("Instructions")
-                        .HasForeignKey("RecipeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Recipe");
+                    b.Navigation("RecipeIngredients");
                 });
 
             modelBuilder.Entity("PersonalProject.Models.Recipe", b =>
                 {
-                    b.Navigation("Ingredients");
-
-                    b.Navigation("Instructions");
+                    b.Navigation("RecipeIngredients");
                 });
 #pragma warning restore 612, 618
         }

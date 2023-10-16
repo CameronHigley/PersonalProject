@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PersonalProject.Data;
 
@@ -11,9 +12,10 @@ using PersonalProject.Data;
 namespace PersonalProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231016210659_AdminRole2")]
+    partial class AdminRole2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +54,7 @@ namespace PersonalProject.Migrations
                         new
                         {
                             Id = "b4280b6a-0613-4cbd-a9e6-f1701e926e73",
-                            ConcurrencyStamp = "fe0a609e-1eef-419d-9388-3671257d53e9",
+                            ConcurrencyStamp = "0464a1cb-e7b8-476b-9d74-9979fd93dee3",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -261,18 +263,6 @@ namespace PersonalProject.Migrations
                     b.HasKey("IngredientID");
 
                     b.ToTable("Ingredients");
-
-                    b.HasData(
-                        new
-                        {
-                            IngredientID = 1,
-                            IngredientName = "Chicken"
-                        },
-                        new
-                        {
-                            IngredientID = 2,
-                            IngredientName = "Salt"
-                        });
                 });
 
             modelBuilder.Entity("PersonalProject.Models.Recipe", b =>
@@ -291,24 +281,17 @@ namespace PersonalProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("RecipeID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Recipes");
-
-                    b.HasData(
-                        new
-                        {
-                            RecipeID = 1,
-                            RecipeInstructions = "Add salt to chicken and cook until done.",
-                            RecipeName = "Test",
-                            UserId = "b4280b6a-0613-4cbd-a9e6-f1701e926e73"
-                        });
                 });
 
             modelBuilder.Entity("PersonalProject.Models.RecipeIngredient", b =>
@@ -328,20 +311,6 @@ namespace PersonalProject.Migrations
                     b.HasIndex("IngredientID");
 
                     b.ToTable("RecipeIngredients");
-
-                    b.HasData(
-                        new
-                        {
-                            RecipeID = 1,
-                            IngredientID = 1,
-                            Amount = "1 lb"
-                        },
-                        new
-                        {
-                            RecipeID = 1,
-                            IngredientID = 2,
-                            Amount = "2 tsp"
-                        });
                 });
 
             modelBuilder.Entity("PersonalProject.Models.ApplicationUser", b =>
@@ -424,9 +393,7 @@ namespace PersonalProject.Migrations
                 {
                     b.HasOne("PersonalProject.Models.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });

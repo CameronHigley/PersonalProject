@@ -6,9 +6,11 @@ namespace PersonalProject.Models
     {
         public int RecipeID { get; set; }
         public string RecipeName { get; set; }
+        public string RecipeInstructions { get; set; }
 
-
-        public ICollection<Ingredient> Ingredients { get; } = new List<Ingredient>();
-        public ICollection<Instruction> Instructions { get; } = new List<Instruction>();
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set;}
+        
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

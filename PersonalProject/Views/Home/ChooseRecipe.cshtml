@@ -1,0 +1,26 @@
+﻿@model ChooseRecipeViewModel
+
+<h2>Your Recipes</h2>
+
+<a asp-controller="Home" asp-action="Add">Add New Recipe</a>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Recipe Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var recipe in Model.Recipes)
+        {
+            <tr>
+                <td>@recipe.RecipeName</td>
+                <td>
+                    <a asp-controller="Home" asp-action="Edit" asp-route-id="@recipe.RecipeID">Edit</a>
+                    <a asp-controller="Home" asp-action="RecipeView" asp-route-id="@recipe.RecipeID">View</a>
+                    <a asp-controller="Home" asp-action="Delete" asp-route-id="@recipe.RecipeID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

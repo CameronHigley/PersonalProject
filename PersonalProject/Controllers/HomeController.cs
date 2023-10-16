@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PersonalProject.Data;
 using PersonalProject.Models;
 using System.Diagnostics;
@@ -9,25 +11,19 @@ namespace PersonalProject.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        //private UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context/*, UserManager<ApplicationUser> userManager*/)
         {
             _logger = logger;
             _context = context;
+            //_userManager = userManager;
         }
 
         public IActionResult RecipeView(int id = 1) 
         {
-            var theModel = new RecipeViewModel
-            {
-                Recipe = _context.Recipes.Find(id),
-                Ingredients = _context.Ingredients
-                    .Where(i => i.RecipeID == id)
-                    .ToList(),
-                Instructions = _context.Instructions
-                    .Where(i => i.RecipeID == id)
-                    .ToList(),
-            };
+            var theModel =  _context.Recipes.Include(r => r.RecipeIngredients)
+                .ThenInclude(ri => ri.Ingredient).FirstOrDefault(r => r.RecipeID == id);
             return View(theModel);
         }
 
@@ -36,10 +32,16 @@ namespace PersonalProject.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        /*public async Task<IActionResult> ChooseRecipeAsync()
         {
-            return View();
-        }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var model = new ChooseRecipeViewModel
+            {
+                Recipes = _context.Recipes.Where(r => r.UserId == user.Id).ToList()
+            };
+
+            return View(model);
+        }*/
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

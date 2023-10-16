@@ -49,12 +49,26 @@ namespace PersonalProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Ingredients",
+                columns: table => new
+                {
+                    IngredientID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IngredientName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ingredients", x => x.IngredientID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Recipes",
                 columns: table => new
                 {
                     RecipeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RecipeName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    RecipeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RecipeInstructions = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -168,65 +182,54 @@ namespace PersonalProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ingredients",
+                name: "RecipeIngredients",
                 columns: table => new
                 {
-                    IngredientID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IngredientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IngredientAmount = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RecipeID = table.Column<int>(type: "int", nullable: false)
+                    RecipeID = table.Column<int>(type: "int", nullable: false),
+                    IngredientID = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ingredients", x => x.IngredientID);
+                    table.PrimaryKey("PK_RecipeIngredients", x => new { x.RecipeID, x.IngredientID });
                     table.ForeignKey(
-                        name: "FK_Ingredients_Recipes_RecipeID",
+                        name: "FK_RecipeIngredients_Ingredients_IngredientID",
+                        column: x => x.IngredientID,
+                        principalTable: "Ingredients",
+                        principalColumn: "IngredientID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RecipeIngredients_Recipes_RecipeID",
                         column: x => x.RecipeID,
                         principalTable: "Recipes",
                         principalColumn: "RecipeID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Instructions",
-                columns: table => new
-                {
-                    InstructionID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    InstructionDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RecipeID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Instructions", x => x.InstructionID);
-                    table.ForeignKey(
-                        name: "FK_Instructions_Recipes_RecipeID",
-                        column: x => x.RecipeID,
-                        principalTable: "Recipes",
-                        principalColumn: "RecipeID",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.InsertData(
+                table: "Ingredients",
+                columns: new[] { "IngredientID", "IngredientName" },
+                values: new object[] { 1, "Chicken" });
+
+            migrationBuilder.InsertData(
+                table: "Ingredients",
+                columns: new[] { "IngredientID", "IngredientName" },
+                values: new object[] { 2, "Salt" });
 
             migrationBuilder.InsertData(
                 table: "Recipes",
-                columns: new[] { "RecipeID", "RecipeName" },
-                values: new object[] { 1, "Test" });
+                columns: new[] { "RecipeID", "RecipeInstructions", "RecipeName" },
+                values: new object[] { 1, "Add salt to chicken and cook until done.", "Test" });
 
             migrationBuilder.InsertData(
-                table: "Ingredients",
-                columns: new[] { "IngredientID", "IngredientAmount", "IngredientName", "RecipeID" },
-                values: new object[] { 1, "1 lb.", "Chicken", 1 });
+                table: "RecipeIngredients",
+                columns: new[] { "IngredientID", "RecipeID", "Amount" },
+                values: new object[] { 1, 1, "1 lb" });
 
             migrationBuilder.InsertData(
-                table: "Ingredients",
-                columns: new[] { "IngredientID", "IngredientAmount", "IngredientName", "RecipeID" },
-                values: new object[] { 2, "1 tsp", "Salt", 1 });
-
-            migrationBuilder.InsertData(
-                table: "Instructions",
-                columns: new[] { "InstructionID", "InstructionDescription", "RecipeID" },
-                values: new object[] { 1, "Add salt to chicken and cook until done.", 1 });
+                table: "RecipeIngredients",
+                columns: new[] { "IngredientID", "RecipeID", "Amount" },
+                values: new object[] { 2, 1, "2 tsp" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -268,14 +271,9 @@ namespace PersonalProject.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ingredients_RecipeID",
-                table: "Ingredients",
-                column: "RecipeID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Instructions_RecipeID",
-                table: "Instructions",
-                column: "RecipeID");
+                name: "IX_RecipeIngredients_IngredientID",
+                table: "RecipeIngredients",
+                column: "IngredientID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -296,16 +294,16 @@ namespace PersonalProject.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Ingredients");
-
-            migrationBuilder.DropTable(
-                name: "Instructions");
+                name: "RecipeIngredients");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Ingredients");
 
             migrationBuilder.DropTable(
                 name: "Recipes");
