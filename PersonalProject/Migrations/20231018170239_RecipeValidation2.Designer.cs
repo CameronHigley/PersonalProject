@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PersonalProject.Data;
 
@@ -11,9 +12,10 @@ using PersonalProject.Data;
 namespace PersonalProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231018170239_RecipeValidation2")]
+    partial class RecipeValidation2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +54,7 @@ namespace PersonalProject.Migrations
                         new
                         {
                             Id = "b4280b6a-0613-4cbd-a9e6-f1701e926e73",
-                            ConcurrencyStamp = "0fb277c4-120a-49b8-80f3-a0543c86830d",
+                            ConcurrencyStamp = "7f1beafa-ca67-4943-90a2-ccf52b9043ac",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });

@@ -1,0 +1,32 @@
+﻿@model RecipeViewModel
+
+<h2>Editing @Model.Recipe.RecipeName</h2>
+@*
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="@Model.Recipe.RecipeName">Recipe Name</label>
+        <input asp-for="@Model.Recipe.RecipeName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        Ingredients:
+        <br />
+        @for(int i=0; i < @Model.IngredientNames.Count(); i++)
+        {
+            @Html.TextBoxFor(model => model.IngredientNames[i])
+            @Html.TextBoxFor(model => model.Amounts[i])
+            <br />
+            <label asp-for="@recipeIngredient.Ingredient.IngredientName">Ingredient:</label>
+            <input asp-for="@recipeIngredient.Ingredient.IngredientName" class="form-control">
+            <label asp-for="@recipeIngredient.Amount">Amount:</label>
+            <input asp-for="@recipeIngredient.Amount" class="form-control">
+        }
+    </div>
+
+    <input type="hidden" asp-for="@Model.Recipe.RecipeID" />
+    
+    <button type="submit" class="btn btn-primary">@ViewBag.Action</button>
+    <a asp-asp-controller="Home" asp-action="ChooseRecipe" class="btn btn-primary">Cancel</a>
+</form>*@
