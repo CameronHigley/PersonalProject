@@ -7,7 +7,7 @@ namespace PersonalProject.Models
         public int RecipeID { get; set; }
         public int IngredientID { get; set; }
 
-        [Required(ErrorMessage ="You must enter an amount for the ingredient")]
+        [Required(ErrorMessage ="Amount must not be blank")]
         public string? Amount { get; set; }
         public Recipe? Recipe { get; set; }
         public Ingredient? Ingredient { get; set; }

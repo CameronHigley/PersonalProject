@@ -10,17 +10,39 @@
     </div>
 
     <div class="ingredients">
-        <label >Amount
-            <input name="RecipeIngredients[0].Amount" />
-        </label>
-        <label >Ingredient
-            <input name="Ingredients[0].IngredientName" />
-        </label>
+        @if (Model.RecipeIngredients == null)
+        {
+            <label>
+                Amount
+                <input name="RecipeIngredients[0].Amount" />
+            </label>
+            <label>
+                Ingredient
+                <input name="Ingredients[0].IngredientName" />
+            </label>
+        }else{
+            for(int i = 0; i<@Model.RecipeIngredients.Count(); i++)
+            {
+                @if(i > 0)
+                {
+                    <br />
+                }
+                <label>
+                    Amount
+                    <input name="RecipeIngredients[@i].Amount" value="@Model.RecipeIngredients[i].Amount"/>
+                </label>
+                <label>
+                    Ingredient
+                    <input name="Ingredients[@i].IngredientName" value="@Model.Ingredients[i].IngredientName"/>
+                </label>
+            }
+        }
         
     </div>
 
     <div>
         <input type="button" value="Add additional ingredient" name="AddIngredient" id="addIngredient">
+        <input type="button" value="Remove last ingredient" name="RemoveIngredient" id="removeIngredient">
     </div>
 
     <div>
