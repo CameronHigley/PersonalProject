@@ -9,11 +9,18 @@
         <input asp-for="@Model.Recipe.RecipeName" class="form-control" />
     </div>
 
+    <div class="ingredients">
+        <label >Amount
+            <input name="RecipeIngredients[0].Amount" />
+        </label>
+        <label >Ingredient
+            <input name="Ingredients[0].IngredientName" />
+        </label>
+        
+    </div>
+
     <div>
-        <label asp-for="@Model.RecipeIngredients[0].Amount">Amount</label>
-        <input asp-for="@Model.RecipeIngredients[0].Amount" />
-        <label asp-for="@Model.Ingredients[0].IngredientName">Ingredient</label>
-        <input asp-for="@Model.Ingredients[0].IngredientName" class="form-control" />
+        <input type="button" value="Add additional ingredient" name="AddIngredient" id="addIngredient">
     </div>
 
     <div>
@@ -28,3 +35,9 @@
     <a asp-asp-controller="Home" asp-action="ChooseRecipe" class="btn btn-primary">Cancel</a>
 
 </form>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="~/js/Add.js"></script>
+
+
+
