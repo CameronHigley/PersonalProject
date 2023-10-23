@@ -5,7 +5,7 @@ using PersonalProject.Models;
 
 namespace PersonalProject.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -28,16 +28,20 @@ namespace PersonalProject.Data
                 .HasOne(ri => ri.Ingredient)
                 .WithMany(i => i.RecipeIngredients)
                 .HasForeignKey(ri => ri.IngredientID);
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ApplicationUser>().HasKey(x => x.Id);
+            const string ADMIN_USER_ID = "b4280b6a-0613-4cbd-a9e6-f1701e926e73";
+            const string ADMIN_ROLE_ID = ADMIN_USER_ID;
             modelBuilder.Entity<IdentityRole>().HasData(
             new IdentityRole
             {
-                Id = "b4280b6a-0613-4cbd-a9e6-f1701e926e73",
+                Id = ADMIN_ROLE_ID,
                 Name = "Administrator",
                 NormalizedName = "ADMINISTRATOR",
             });
             modelBuilder.Entity<ApplicationUser>().HasData(new ApplicationUser
             {
-                Id = "b4280b6a-0613-4cbd-a9e6-f1701e926e73",
+                Id = ADMIN_USER_ID,
                 UserName = "admin@email.com",
                 NormalizedUserName = "ADMIN@EMAIL.COM",
                 Email = "admin@email.com",
@@ -49,8 +53,8 @@ namespace PersonalProject.Data
             });
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
             {
-                RoleId = "b4280b6a-0613-4cbd-a9e6-f1701e926e73",
-                UserId = "b4280b6a-0613-4cbd-a9e6-f1701e926e73"
+                RoleId = ADMIN_ROLE_ID,
+                UserId = ADMIN_USER_ID
             });
             modelBuilder.Entity<Recipe>().HasData(
                 new Recipe

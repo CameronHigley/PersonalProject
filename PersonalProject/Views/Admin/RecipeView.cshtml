@@ -1,0 +1,15 @@
+﻿@model Recipe
+
+<h3>@Model.RecipeName</h3>
+<br />
+<h4>Created by: @Model.User.UserName</h4>
+<ul>
+    @foreach (RecipeIngredient recipeIngredient in Model.RecipeIngredients)
+    {
+        <li>@(recipeIngredient.Ingredient.IngredientName) - @(recipeIngredient.Amount)</li>
+
+    }
+</ul>
+<p>@Model.RecipeInstructions</p>
+<br />
+<a asp-controller="Admin" asp-action="AllRecipes">Back</a>
