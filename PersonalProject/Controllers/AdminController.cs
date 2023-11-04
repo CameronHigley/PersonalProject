@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PersonalProject.Data;
 using PersonalProject.Models;
+using System.Collections.Generic;
 
 namespace PersonalProject.Controllers
 {
@@ -38,6 +39,37 @@ namespace PersonalProject.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult AllUsers()
+        {
+            IList<ApplicationUser> model = new List<ApplicationUser>();
+            foreach (ApplicationUser user in userManager.Users)
+            {
+                model.Add(user);
+            }
+            return View(model);
+        }
+
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            await userManager.DeleteAsync(await userManager.FindByIdAsync(id));
+            return RedirectToAction("AllUsers");
+        }
+
+        [HttpGet]
+        public IActionResult DeleteRecipe(int id)
+        {
+            Recipe model = _context.Recipes.Find(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteRecipe(Recipe recipe)
+        {
+            _context.Recipes.Remove(recipe);
+            _context.SaveChanges();
+            return RedirectToAction("AllRecipes");
         }
     }
 }
