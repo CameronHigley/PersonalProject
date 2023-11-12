@@ -47,7 +47,7 @@
 
     <div>
         <label asp-for="@Model.Recipe.RecipeInstructions">Instructions:</label>
-        <input asp-for="@Model.Recipe.RecipeInstructions" class="form-control" />
+        <textarea asp-for="@Model.Recipe.RecipeInstructions" class="form-control" ></textarea>
     </div>
 
     <input type="hidden" asp-for="@Model.Recipe.RecipeID" value="0" />
