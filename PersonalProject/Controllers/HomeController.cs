@@ -33,8 +33,20 @@ namespace PersonalProject.Controllers
                 RecipeIngredients = _context.RecipeIngredients.Include(ri => ri.Ingredient).Where(ri => ri.RecipeID == id).ToList(),
                 Ingredients = new List<Ingredient>(),
             };
+            foreach(RecipeIngredient ri in model.RecipeIngredients)
+            {
+                Ingredient ingredient = _context.Ingredients.Find(ri.IngredientID);
+                model.Ingredients.Add(ingredient);
+            }
             ViewBag.userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return View(model);
+            if(ViewBag.userId == model.Recipe.UserId)
+            {
+                return View(model);
+            } else
+            {
+                return RedirectToAction("ChooseRecipe");
+            }
+            
         }
         [HttpPost]
         public IActionResult Edit(RecipeViewModel model)

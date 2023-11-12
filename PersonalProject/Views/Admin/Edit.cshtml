@@ -35,7 +35,7 @@
                 </label>
                 <label>
                     Ingredient
-                    <input name="Ingredients[@i].IngredientName" value="@Model.Ingredients[i].IngredientName" />
+                    <input name="Ingredients[@i].IngredientName" value="@Model.RecipeIngredients[i].Ingredient.IngredientName" />
                 </label>
             }
         }
@@ -56,7 +56,7 @@
     <input type="hidden" asp-for="@Model.Recipe.UserId" value="@ViewBag.userId" />
 
     <button type="submit" class="btn btn-primary">Confirm Changes</button>
-    <a asp-asp-controller="Home" asp-action="ChooseRecipe" class="btn btn-primary">Cancel</a>
+    <a asp-asp-controller="Admin" asp-action="AllRecipes" class="btn btn-primary">Cancel</a>
 
 </form>
 

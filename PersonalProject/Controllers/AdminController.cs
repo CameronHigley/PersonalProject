@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PersonalProject.Data;
 using PersonalProject.Models;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace PersonalProject.Controllers
 {
@@ -70,6 +71,89 @@ namespace PersonalProject.Controllers
             _context.Recipes.Remove(recipe);
             _context.SaveChanges();
             return RedirectToAction("AllRecipes");
+        }
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var model = new RecipeViewModel
+            {
+                Recipe = _context.Recipes.Find(id),
+                RecipeIngredients = _context.RecipeIngredients.Include(ri => ri.Ingredient).Where(ri => ri.RecipeID == id).ToList(),
+                Ingredients = new List<Ingredient>(),
+            };
+            foreach (RecipeIngredient ri in model.RecipeIngredients)
+            {
+                Ingredient ingredient = _context.Ingredients.Find(ri.IngredientID);
+                model.Ingredients.Add(ingredient);
+            }
+            ViewBag.userId = model.Recipe.UserId;
+            return View(model);
+
+        }
+        [HttpPost]
+        public IActionResult Edit(RecipeViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Recipes.Update(model.Recipe);
+                List<RecipeIngredient> oldRecipeIngredients = _context.RecipeIngredients.Where(ri => ri.RecipeID == model.Recipe.RecipeID).ToList();
+                List<RecipeIngredient> currentRecipeIngredients = new List<RecipeIngredient>();
+                for (int i = 0; i < model.Ingredients.Count(); i++)
+                {
+                    var name = model.Ingredients[i].IngredientName;
+                    var ingredient = new Ingredient();
+                    if (_context.Ingredients.Any(i => i.IngredientName == name))
+                    {
+                        ingredient = _context.Ingredients.FirstOrDefault(i => i.IngredientName == name);
+                    }
+                    else
+                    {
+                        ingredient = new Ingredient
+                        {
+                            IngredientName = name,
+                        };
+                        _context.Ingredients.Add(ingredient);
+                    }
+                    var recipeIngredient = new RecipeIngredient
+                    {
+                        Recipe = model.Recipe,
+                        RecipeID = model.Recipe.RecipeID,
+                        Ingredient = ingredient,
+                        IngredientID = ingredient.IngredientID,
+                        Amount = model.RecipeIngredients[i].Amount
+                    };
+                    // if ingredient is already linked to this recipe
+                    if (_context.RecipeIngredients.Any(ri => ri.RecipeID == recipeIngredient.RecipeID
+                        && ri.IngredientID == recipeIngredient.IngredientID))
+                    {
+                        RecipeIngredient oldRecipeIngredient = _context.RecipeIngredients.Where(ri => ri.RecipeID == recipeIngredient.RecipeID).FirstOrDefault(ri => ri.IngredientID == recipeIngredient.IngredientID);
+                        //check if amount is different
+                        if (oldRecipeIngredient.Amount != recipeIngredient.Amount)
+                        {
+                            _context.RecipeIngredients.Update(recipeIngredient);
+                        }
+                    }
+                    else
+                    {
+                        _context.RecipeIngredients.Add(recipeIngredient);
+                    }
+                    currentRecipeIngredients.Add(recipeIngredient);
+                }
+                foreach (RecipeIngredient oldri in oldRecipeIngredients)
+                {
+                    if (!currentRecipeIngredients.Any(ri => ri.RecipeID == oldri.RecipeID && ri.IngredientID == oldri.IngredientID))
+                    {
+                        _context.RecipeIngredients.Remove(oldri);
+                    }
+                }
+                _context.SaveChanges();
+                return RedirectToAction("AllRecipes");
+            }
+            else
+            {
+                ViewBag.userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                return View(model);
+            }
         }
     }
 }
