@@ -1,0 +1,10 @@
+﻿@model List<Ingredient>
+
+<h1> Your shopping List:</h1>
+<ul>
+    @foreach (Ingredient i in Model)
+    {
+        <li>@i.IngredientName</li>
+    }
+</ul>
+

@@ -6,6 +6,7 @@ namespace PersonalProject.Models
     public class ApplicationUser : IdentityUser
     {
         ICollection<Recipe>? Recipes { get; set; }
+        ICollection<ShoppingList>? ShoppingLists { get; set; }
         [NotMapped]
         public IList<string> RoleNames { get; set; }
     }

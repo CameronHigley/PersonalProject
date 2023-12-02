@@ -15,6 +15,8 @@ namespace PersonalProject.Data
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Ingredient> Ingredients { get; set;}
         public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
+        public DbSet<ShoppingList> ShoppingLists { get; set; }
+        public DbSet<ShoppingListIngredient> ShoppingListIngredients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +30,15 @@ namespace PersonalProject.Data
                 .HasOne(ri => ri.Ingredient)
                 .WithMany(i => i.RecipeIngredients)
                 .HasForeignKey(ri => ri.IngredientID);
+            modelBuilder.Entity<ShoppingListIngredient>().HasKey(sli => new { sli.ShoppingListId, sli.IngredientId });
+            modelBuilder.Entity<ShoppingListIngredient>()
+                .HasOne(sli => sli.ShoppingList)
+                .WithMany(sl => sl.ShoppingListIngredients)
+                .HasForeignKey(sli => sli.ShoppingListId);
+            modelBuilder.Entity<ShoppingListIngredient>()
+                .HasOne(sli => sli.Ingredient)
+                .WithMany(sl => sl.ShoppingListIngredients)
+                .HasForeignKey(sli => sli.IngredientId);
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<ApplicationUser>().HasKey(x => x.Id);
             const string ADMIN_USER_ID = "b4280b6a-0613-4cbd-a9e6-f1701e926e73";

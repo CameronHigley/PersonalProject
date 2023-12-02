@@ -9,5 +9,6 @@ namespace PersonalProject.Models
         public string? IngredientName { get; set; }
 
         public ICollection<RecipeIngredient>? RecipeIngredients { get; set; }
+        public ICollection<ShoppingListIngredient>? ShoppingListIngredients { get; set; }
     }
 }

@@ -193,7 +193,79 @@ namespace PersonalProject.Controllers
 
             return View(model);
         }
-
+        [HttpGet]
+        public IActionResult MakeShoppingList()
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var recipeList = _context.Recipes.Where(r => r.UserId == id).ToList();
+            var model = new RecipeCheckList();
+            foreach(var recipe in recipeList)
+            {
+                model.List.Add(new RecipeCheck
+                {
+                    Recipe = recipe,
+                    IsChecked = false,
+                });
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult MakeShoppingList(RecipeCheckList input)
+        {
+            var model = new ShoppingList
+            {
+                Time = DateTime.Now,
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            };
+            
+            List<Ingredient> uniqueIngredients = new List<Ingredient>();
+            for (int i = 0; i < input.List.Count; i++)
+            {
+                if (input.List[i].IsChecked == true)
+                {
+                    var recipeIngredients = _context.RecipeIngredients.Include(ri => ri.Ingredient).Where(ri => ri.RecipeID == input.List[i].Recipe.RecipeID).ToList();
+                    foreach(RecipeIngredient ri in recipeIngredients)
+                    {
+                        if (!uniqueIngredients.Contains(ri.Ingredient))
+                        {
+                            uniqueIngredients.Add(ri.Ingredient);
+                            ShoppingListIngredient uniqueIngredient = new ShoppingListIngredient
+                            {
+                                ShoppingList = model,
+                                Ingredient = ri.Ingredient
+                            };
+                            _context.ShoppingListIngredients.Add(uniqueIngredient);
+                        }
+                    }
+                }
+            }
+            _context.ShoppingLists.Add(model);
+            _context.SaveChanges();
+            return RedirectToAction("ListShoppingLists");
+        }
+        public IActionResult ViewShoppingList(int id)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var shoppingList = _context.ShoppingLists.Include(sl => sl.ShoppingListIngredients).ThenInclude(sli => sli.Ingredient).FirstOrDefault(sl => sl.Id == id);
+            if(shoppingList == null || shoppingList.UserId != userId)
+            {
+                return RedirectToAction("ListShoppingLists");
+            }else
+            {
+                var model = new List<Ingredient>();
+                foreach(ShoppingListIngredient sli in shoppingList.ShoppingListIngredients)
+                {
+                    model.Add(sli.Ingredient);
+                }
+                return View(model);
+            }
+        }
+        public IActionResult ListShoppingLists()
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            List<ShoppingList> model = _context.ShoppingLists.Where(sl => sl.UserId == id).ToList();
+            return View(model);
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
